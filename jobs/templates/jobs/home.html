@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <h1 class="mb-4">Welcome to Job Portal</h1>
+        
+        {% if user.is_authenticated %}
+            {% if user.is_employer %}
+                <a href="{% url 'post-job' %}" class="btn btn-primary mb-4">
+                    <i class="bi bi-plus-circle"></i> Post a Job
+                </a>
+            {% else %}
+                <a href="{% url 'job-list' %}" class="btn btn-primary mb-4">
+                    <i class="bi bi-search"></i> Browse Jobs
+                </a>
+            {% endif %}
+        {% else %}
+            <div class="d-grid gap-2 d-md-flex">
+                <a href="{% url 'login' %}" class="btn btn-primary me-md-2">
+                    <i class="bi bi-box-arrow-in-right"></i> Login
+                </a>
+                <a href="{% url 'signup' %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-person-plus"></i> Sign Up
+                </a>
+            </div>
+        {% endif %}
+
+        <h2 class="mt-5 mb-3">Recent Job Listings</h2>
+        <div class="list-group">
+            {% for job in jobs %}
+            <a href="{% url 'job-detail' job.id %}" class="list-group-item list-group-item-action">
+                <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1">{{ job.title }}</h5>
+                    <small>{{ job.get_job_type_display }}</small>
+                </div>
+                <p class="mb-1">{{ job.employer.company_name }} - {{ job.location }}</p>
+                <small>Posted {{ job.posted_date|timesince }} ago</small>
+            </a>
+            {% empty %}
+            <div class="alert alert-info">No jobs available currently.</div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="row">
+    <div class="col-md-8 mx-auto">
+      <div class="card">
+        <div class="card-header bg-primary text-white">
+          <h3><i class="fas fa-briefcase"></i> Your Job Postings</h3>
+        </div>
+        <div class="card-body">
+          {% for job in jobs %}
+          <div class="job-card mb-3 p-3 border rounded">
+            <h4>{{ job.title }}</h4>
+            <p class="text-muted">
+              <i class="fas fa-map-marker-alt"></i> {{ job.location }} | 
+              <i class="fas fa-clock"></i> {{ job.posted_date|date:"M d, Y" }}
+            </p>
+            
+            <div class="d-flex justify-content-between align-items-center">
+              <span class="badge bg-secondary">
+                {{ job.application_set.count }} applicant(s)
+              </span>
+              
+              <a href="{% url 'view-applicants' job.id %}" class="btn btn-primary btn-sm">
+                <i class="fas fa-users"></i> View Applicants
+              </a>
+            </div>
+          </div>
+          {% empty %}
+          <div class="alert alert-info">
+            <i class="fas fa-info-circle"></i> You haven't posted any jobs yet.
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

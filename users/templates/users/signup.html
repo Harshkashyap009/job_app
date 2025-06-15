@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Sign Up</h3>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <a href="{% url 'jobseeker-signup' %}" class="btn btn-primary btn-lg">Job Seeker</a>
+                        <a href="{% url 'employer-signup' %}" class="btn btn-secondary btn-lg">Employer</a>
+                    </div>
+                    <p class="text-center">Already have an account? <a href="{% url 'login' %}">Login</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

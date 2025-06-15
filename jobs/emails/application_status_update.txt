@@ -1,0 +1,13 @@
+Dear {{ applicant.get_full_name }},
+
+Your application for "{{ job.title }}" at {{ job.employer.company_name }} has been updated.
+
+Status: {{ application.get_status_display }}
+
+{% if application.employer_notes %}
+Employer Notes:
+{{ application.employer_notes }}
+{% endif %}
+
+Thank you,
+{{ job.employer.company_name }} Team

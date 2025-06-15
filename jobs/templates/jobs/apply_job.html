@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header bg-primary text-white">
+          <h3>Apply for: {{ job.title }}</h3>
+          <p class="mb-0">{{ job.employer.company_name }} - {{ job.location }}</p>
+        </div>
+        <div class="card-body">
+          {% if messages %}
+            {% for message in messages %}
+              <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+
+          {% if not user.is_authenticated %}
+            <div class="alert alert-warning">
+              Please <a href="{% url 'login' %}?next={% url 'jobs:apply-job' job.id %}">login</a> to apply.
+            </div>
+          {% elif already_applied %}
+            <div class="alert alert-info">You have already applied for this job.</div>
+            <a href="{% url 'job-detail' job.id %}" class="btn btn-primary">Back to Job</a>
+          {% else %}
+            <form method="post" enctype="multipart/form-data">
+              {% csrf_token %}
+              {{ form|crispy }}
+              <div class="form-group mt-4">
+                <button type="submit" class="btn btn-success">Submit Application</button>
+                <a href="{% url 'job-detail' job.id %}" class="btn btn-outline-secondary">Cancel</a>
+              </div>
+            </form>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

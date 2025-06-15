@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card">
+    <div class="card-body">
+        <h2 class="card-title">{{ job.title }}</h2>
+        <h5 class="card-subtitle mb-2 text-muted">{{ job.employer.company_name }}</h5>
+        <p class="card-text">{{ job.description }}</p>
+        
+        <ul class="list-group list-group-flush mb-3">
+            <li class="list-group-item"><strong>Location:</strong> {{ job.location }}</li>
+            <li class="list-group-item"><strong>Job Type:</strong> {{ job.get_job_type_display }}</li>
+            <li class="list-group-item"><strong>Salary:</strong> {{ job.salary|default:"Not specified" }}</li>
+            <li class="list-group-item"><strong>Posted:</strong> {{ job.posted_date|date:"M d, Y" }}</li>
+        </ul>
+        
+        {% if user.is_authenticated %}
+            {% if user.is_jobseeker and not has_applied %}
+                <a href="{% url 'apply-job' job.id %}" class="btn btn-primary">Apply Now</a>
+            {% elif has_applied %}
+                <div class="alert alert-success">You have already applied for this job</div>
+            {% endif %}
+        {% else %}
+            <a href="{% url 'login' %}?next={% url 'job-detail' job.id %}" class="btn btn-primary">
+                Login to Apply
+            </a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

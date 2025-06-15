@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <h4>Review Application</h4>
+      <div>
+        <a href="{% url 'view-applicants' application.job.id %}" class="btn btn-outline-secondary">
+          Back to Applicants
+        </a>
+        <a href="{% url 'view-application' application.id %}" class="btn btn-outline-info ms-2">
+          View Application
+        </a>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="row mb-4">
+        <div class="col-md-6">
+          <h5>Applicant Details</h5>
+          <p><strong>Name:</strong> {{ application.applicant.user.get_full_name }}</p>
+          <p><strong>Email:</strong> {{ application.applicant.user.email }}</p>
+          <p><strong>Phone:</strong> {{ application.applicant.phone|default:"Not provided" }}</p>
+        </div>
+        <div class="col-md-6">
+          <h5>Job Details</h5>
+          <p><strong>Position:</strong> {{ application.job.title }}</p>
+          <p><strong>Location:</strong> {{ application.job.location }}</p>
+          <p><strong>Applied:</strong> {{ application.applied_date|date:"M d, Y" }}</p>
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <h5>Cover Letter</h5>
+        <div class="p-3 bg-light rounded">
+          {{ application.cover_letter|linebreaks }}
+        </div>
+      </div>
+
+      <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label class="form-label">Current Status</label>
+          <div>
+            <span class="badge 
+              {% if application.status == 'A' %}bg-success
+              {% elif application.status == 'R' %}bg-danger
+              {% else %}bg-warning text-dark{% endif %}">
+              {{ application.get_status_display }}
+            </span>
+          </div>
+        </div>
+
+        <div class="d-flex justify-content-between mt-4">
+          <button type="submit" name="status" value="R" class="btn btn-danger me-2">
+            Reject Application
+          </button>
+          <button type="submit" name="status" value="A" class="btn btn-success">
+            Accept Application
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

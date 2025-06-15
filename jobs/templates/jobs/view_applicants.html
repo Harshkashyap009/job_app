@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <a href="{% url 'employer-dashboard' %}">
+          <i class="fas fa-tachometer-alt"></i> Dashboard
+        </a>
+      </li>
+      <li class="breadcrumb-item active" aria-current="page">
+        Applicants for {{ job.title }}
+      </li>
+    </ol>
+  </nav>
+
+  <div class="card">
+    <div class="card-header bg-primary text-white d-flex justify-content-between">
+      <h3><i class="fas fa-users"></i> Applicants for: {{ job.title }}</h3>
+      <span class="badge bg-light text-dark">{{ applications.count }} total</span>
+    </div>
+    
+    <div class="card-body">
+      {% if applications %}
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead class="table-light">
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Applied</th>
+              <th>Resume</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for application in applications %}
+            <tr>
+              <td>{{ application.applicant.user.get_full_name }}</td>
+              <td>{{ application.applicant.user.email }}</td>
+              <td>{{ application.applied_date|date:"M d" }}</td>
+              <td>
+                <a href="{{ application.resume.url }}" class="btn btn-sm btn-outline-primary">
+                  <i class="fas fa-download"></i> Download
+                </a>
+              </td>
+              <td>
+                <a href="{% url 'view-application' application.id %}" class="btn btn-sm btn-primary">
+                  <i class="fas fa-eye"></i> View
+                </a>
+                <a href="{% url 'update-application' application.id %}" class="btn btn-sm btn-warning">
+                  <i class="fas fa-edit"></i> Update Status
+                </a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i> No applicants yet for this position.
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
