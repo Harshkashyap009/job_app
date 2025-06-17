@@ -1,6 +1,15 @@
 import os
+import dj_database_url
+
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
+
+DEBUG = False
+ALLOWED_HOSTS = ['job_portal_harsh.onrender.com']
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 SECRET_KEY = 'your-secret-key-here'
 
@@ -51,8 +60,11 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'job_portal.wsgi.application'
 
+
 DATABASES = {
-    'default': dj_database_url.config(default=os.environ.get('DATABASE_URL'))
+    'default': dj_database_url.config(
+        default='postgresql://jobdatabase_iqdl_user:B5CzB93gsp7ugITL8vxSshsBIlmGWugb@dpg-d18r6qqli9vc73ftfs10-a.oregon-postgres.render.com/jobdatabase_iqdl'
+    )
 }
 
 AUTH_PASSWORD_VALIDATORS = [
