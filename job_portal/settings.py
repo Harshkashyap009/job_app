@@ -7,7 +7,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 DEBUG = False
-ALLOWED_HOSTS = ['job_portal_harsh.onrender.com']
+ALLOWED_HOSTS = ['job_portal.onrender.com']
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
