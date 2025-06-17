@@ -6,6 +6,15 @@
         <h2 class="card-title">{{ job.title }}</h2>
         <h5 class="card-subtitle mb-2 text-muted">{{ job.employer.company_name }}</h5>
         <p class="card-text">{{ job.description }}</p>
+        <p>
+            {% if app.status == 'A' %}
+              <span class="badge bg-success">Approved</span>
+            {% elif app.status == 'R' %}
+              <span class="badge bg-danger">Rejected</span>
+            {% else %}
+              <span class="badge bg-secondary">Pending</span>
+            {% endif %}
+        </p>
         
         <ul class="list-group list-group-flush mb-3">
             <li class="list-group-item"><strong>Location:</strong> {{ job.location }}</li>
@@ -13,6 +22,7 @@
             <li class="list-group-item"><strong>Salary:</strong> {{ job.salary|default:"Not specified" }}</li>
             <li class="list-group-item"><strong>Posted:</strong> {{ job.posted_date|date:"M d, Y" }}</li>
         </ul>
+        
         
         {% if user.is_authenticated %}
             {% if user.is_jobseeker and not has_applied %}

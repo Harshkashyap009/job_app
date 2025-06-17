@@ -1,16 +1,28 @@
 # Create your views here.
 from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.auth.decorators import login_required# jobs/views.py
 from django.contrib.auth.decorators import login_required
 from .models import Job, Application
-from .forms import JobForm, ApplicationForm, ApplicationStatusForm
+from .forms import JobForm, ApplicationStatusForm
 from django.contrib import messages
-from django.core.exceptions import PermissionDenied
-
-
 
 def home(request):
-    return render(request, 'jobs/home.html')  # Ensure this template exists
+    query = request.GET.get('q')
+    jobs = Job.objects.filter(is_active=True).order_by('-posted_date')
+
+    if query:
+        jobs = jobs.filter(title__icontains=query)
+
+    applied_status = {}
+    if request.user.is_authenticated and request.user.is_jobseeker:
+        jobseeker = request.user.jobseeker
+        applications = Application.objects.filter(applicant=jobseeker)
+        applied_status = {app.job.id: app.status for app in applications}
+
+    return render(request, 'jobs/home.html', {
+        'jobs': jobs,
+        'query': query,
+        'applied_status': applied_status
+    })
 
 @login_required
 def job_detail(request, job_id):
@@ -26,6 +38,7 @@ def job_detail(request, job_id):
     return render(request, 'jobs/job_detail.html', {
         'job': job,
         'has_applied': has_applied
+        
     })
 
 @login_required
@@ -46,45 +59,74 @@ def post_job(request):
     return render(request, 'jobs/post_job.html', {'form': form})
 
 @login_required
-
-@login_required
 def apply_job(request, job_id):
     job = get_object_or_404(Job, id=job_id)
 
     if not request.user.is_jobseeker:
         messages.error(request, 'Only job seekers can apply.')
-        return redirect('jobs:job-detail', job_id=job.id)
+        return redirect('job-detail', job_id=job.id)
 
     jobseeker = request.user.jobseeker
     already_applied = Application.objects.filter(job=job, applicant=jobseeker).exists()
 
     if already_applied:
         messages.info(request, 'You have already applied.')
-        return render(request, 'jobs/apply_job.html', {'job': job, 'already_applied': True})
+        return render(request, 'jobs/apply_job.html', {
+            'job': job,
+            'already_applied': True
+        })
 
     if request.method == 'POST':
-        form = ApplicationForm(request.POST, request.FILES)
-        if form.is_valid():
-            application = form.save(commit=False)
-            application.job = job
-            application.applicant = jobseeker
-            application.save()
-            messages.success(request, 'Application submitted successfully!')
+        # Extract values from form
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        email = request.POST.get('email')
+        phone = request.POST.get('phone')
+        resume = request.FILES.get('resume')
+
+        if first_name and last_name and email and phone and resume:
+            # Save application
+            Application.objects.create(
+                job=job,
+                applicant=jobseeker,
+                first_name=first_name,
+                last_name=last_name,
+                email=email,
+                phone=phone,
+                resume=resume
+            )
+            messages.success(request, 'Application submitted successfully harsh!')
             return redirect('job-detail', job_id=job.id)
         else:
-            print("Form is invalid:", form.errors)
-    else:
-        form = ApplicationForm()
+            messages.error(request, 'All fields are required.')
 
     return render(request, 'jobs/apply_job.html', {
         'job': job,
-        'form': form,
         'already_applied': False
     })
-
+@login_required
 def job_list(request):
-    jobs = Job.objects.filter(is_active=True).order_by('-posted_date')
-    return render(request, 'jobs/job_list.html', {'jobs': jobs})
+    query = request.GET.get('q', '')
+
+    if request.user.is_employer:
+        # Show only jobs posted by the employer
+        jobs = Job.objects.filter(
+            employer=request.user.employer,
+            is_active=True
+        ).order_by('-posted_date')
+    else:
+        # Show all jobs to job seekers
+        jobs = Job.objects.filter(
+            is_active=True
+        ).order_by('-posted_date')
+
+    if query:
+        jobs = jobs.filter(title__icontains=query)
+
+    return render(request, 'jobs/job_list.html', {
+        'jobs': jobs,
+        'query': query
+    })
 
 
 @login_required
@@ -126,19 +168,16 @@ def update_application(request, application_id):
         id=application_id,
         job__employer=request.user.employer
     )
-    
-    if not request.user.has_perm('jobs.change_application_status'):
-        raise PermissionDenied  # This should now show no warning
-    
+
     if request.method == 'POST':
         form = ApplicationStatusForm(request.POST, instance=application)
         if form.is_valid():
-            application = form.save()
-            messages.success(request, f"Application status updated to {application.get_status_display()}")
-            return redirect('jobs:view-applicants', job_id=application.job.id)
+            form.save()
+            messages.success(request, 'Application status updated')
+            return redirect('view-applicants', job_id=application.job.id)
     else:
         form = ApplicationStatusForm(instance=application)
-    
+
     return render(request, 'jobs/update_application.html', {
         'application': application,
         'form': form
@@ -151,3 +190,15 @@ def view_applicants(request, job_id):
         'job': job,
         'applications': applications
     })    
+
+@login_required
+def my_applications(request):
+    if not request.user.is_jobseeker:
+        return redirect('home')
+    
+    jobseeker = request.user.jobseeker
+    applications = Application.objects.filter(applicant=jobseeker).select_related('job').order_by('-applied_date')
+
+    return render(request, 'jobs/my_applications.html', {
+        'applications': applications
+    })

@@ -4,7 +4,7 @@
 <div class="row">
     <div class="col-md-8 mx-auto">
         <h1 class="mb-4">Welcome to Job Portal</h1>
-        
+
         {% if user.is_authenticated %}
             {% if user.is_employer %}
                 <a href="{% url 'post-job' %}" class="btn btn-primary mb-4">
@@ -26,7 +26,12 @@
             </div>
         {% endif %}
 
-        <h2 class="mt-5 mb-3">Recent Job Listings</h2>
+        {% comment %} <form method="get" action="{% url 'job-list' %}" class="my-4 d-flex">
+            <input type="text" name="q" class="form-control me-2" placeholder="Search jobs by title..." value="{{ request.GET.q }}">
+            <button type="submit" class="btn btn-outline-primary">Search</button>
+        </form> {% endcomment %}
+
+        <h2 class="mt-4 mb-3">Recent Job Listings</h2>
         <div class="list-group">
             {% for job in jobs %}
             <a href="{% url 'job-detail' job.id %}" class="list-group-item list-group-item-action">

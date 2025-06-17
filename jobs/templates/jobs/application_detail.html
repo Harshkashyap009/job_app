@@ -1,72 +1,53 @@
-{% extends 'base.html' %} {% block content %}
+{% extends 'base.html' %}
+
+{% block content %}
 <div class="container mt-4">
   <div class="card">
     <div class="card-header d-flex justify-content-between align-items-center">
       <h4>Application for: {{ application.job.title }}</h4>
-      <form method='post'>
-        {% csrf_token %}
-        <div>
-        <a
-          href="{% url 'view-applicants' application.job.id %}"
-          class="btn btn-outline-secondary"
-        >
-          Back to Applicants
-        </a>
-        <a
-          href="{% url 'update-application' application.id %}"
-          class="btn btn-outline-primary ms-2"
-        >
-          Update Status
-        </a>
+      <div>
+        <a href="{% url 'view-applicants' application.job.id %}" class="btn btn-outline-secondary">Back to Applicants</a>
+        <a href="{% url 'update-application' application.id %}" class="btn btn-outline-primary ms-2">Update Status</a>
       </div>
-      <form/>
     </div>
+
     <div class="card-body">
       <div class="row mb-4">
         <div class="col-md-6">
           <h5>Applicant Information</h5>
-          <p>
-            <strong>Name:</strong> {{ application.applicant.user.get_full_name
-            }}
-          </p>
-          <p><strong>Email:</strong> {{ application.applicant.user.email }}</p>
-          <p>
-            <strong>Phone:</strong> {{ application.applicant.phone|default:"Not
-            provided" }}
-          </p>
+          <p><strong>First Name:</strong> {{ application.first_name }}</p>
+          <p><strong>Last Name:</strong> {{ application.last_name }}</p>
+          <p><strong>Email:</strong> {{ application.email }}</p>
+          <p><strong>Phone:</strong> {{ application.phone|default:"Not provided" }}</p>
         </div>
         <div class="col-md-6">
           <h5>Application Details</h5>
-          <p>
-            <strong>Applied On:</strong> {{ application.applied_on|date:"M d, Y"
-            }}
-          </p>
+          <p><strong>Applied On:</strong> {{ application.applied_date|date:"M d, Y" }}</p>
           <p>
             <strong>Status:</strong>
-            <span
-              class="badge {% if application.status == 'A' %}bg-success {% elif application.status == 'R' %}bg-danger {% else %}bg-secondary{% endif %}"
-            >
+            <span class="badge 
+              {% if application.status == 'A' %}bg-success 
+              {% elif application.status == 'R' %}bg-danger 
+              {% else %}bg-secondary{% endif %}">
               {{ application.get_status_display }}
             </span>
           </p>
         </div>
       </div>
 
+      {% if application.cover_letter %}
       <div class="mb-4">
         <h5>Cover Letter</h5>
         <div class="p-3 bg-light rounded">
           {{ application.cover_letter|linebreaks }}
         </div>
       </div>
+      {% endif %}
 
       {% if application.resume %}
       <div class="mb-4">
         <h5>Resume</h5>
-        <a
-          href="{{ application.resume.url }}"
-          class="btn btn-primary"
-          target="_blank"
-        >
+        <a href="{{ application.resume.url }}" class="btn btn-primary" target="_blank">
           <i class="fas fa-download"></i> Download Resume
         </a>
       </div>

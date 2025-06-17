@@ -41,6 +41,7 @@ urlpatterns = [
     path('applications/<int:application_id>/update/', views.update_application, name='update-application'),
     path('jobs/<int:job_id>/applicants/', views.view_applicants, name='view-applicants'),
     
+    
     # User URLs
     path('signup/', user_views.signup, name='signup'),
     path('signup/jobseeker/', user_views.jobseeker_signup, name='jobseeker-signup'),
