@@ -28,7 +28,8 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', home, name='home'),
+    path('', views.home, name='home'),
+    path('', include('jobs.urls')),
 
     # Job URLs
     path('employer/dashboard/', views.employer_dashboard, name='employer-dashboard'),
