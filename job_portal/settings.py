@@ -64,7 +64,7 @@ WSGI_APPLICATION = 'job_portal.wsgi.application'
 
 
 DATABASES = {
-    'default': dj_database_url.config(default=os.environ.get('DATABASE_URL'))
+    'default': dj_database_url.config(default=os.environ.get('postgresql://jobdatabase_iqdl_user:B5CzB93gsp7ugITL8vxSshsBIlmGWugb@dpg-d18r6qqli9vc73ftfs10-a.oregon-postgres.render.com/jobdatabase_iqdl'))
 }
 
 AUTH_PASSWORD_VALIDATORS = [
