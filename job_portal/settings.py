@@ -7,7 +7,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 DEBUG = False
-ALLOWED_HOSTS = ['job_portal.onrender.com']
+ALLOWED_HOSTS = ['job-app-1-nfvf.onrender.com']  # ✅ exact Render domain
+
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
@@ -15,7 +16,7 @@ SECRET_KEY = 'your-secret-key-here'
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -62,9 +63,7 @@ WSGI_APPLICATION = 'job_portal.wsgi.application'
 
 
 DATABASES = {
-    'default': dj_database_url.config(
-        default='postgresql://jobdatabase_iqdl_user:B5CzB93gsp7ugITL8vxSshsBIlmGWugb@dpg-d18r6qqli9vc73ftfs10-a.oregon-postgres.render.com/jobdatabase_iqdl'
-    )
+    'default': dj_database_url.config(default=os.environ.get('DATABASE_URL'))
 }
 
 AUTH_PASSWORD_VALIDATORS = [
