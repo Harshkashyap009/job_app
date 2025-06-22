@@ -7,9 +7,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 DEBUG = False
-ALLOWED_HOSTS = ['job-app-1-nfvf.onrender.com']
-
-
+ALLOWED_HOSTS = ['job_portal.onrender.com']
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
@@ -17,7 +15,7 @@ SECRET_KEY = 'your-secret-key-here'
 
 DEBUG = True
 
-
+ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'django.contrib.admin',
